@@ -27,9 +27,37 @@ yarn add socket.io
 
 ```
 
+## ESLint
+
+.eslintrc <- eslint extension install
+
+```
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "prettier": "^2.0.5",
+```
+
+```
+    module.exports = {
+    env: {
+        browser: true,
+        es6: true,
+        node: true,
+     },
+    extends: ["eslint:recommended", "plugin:prettier/recommended"],
+    parserOptions: {
+        ecmaVersion: 2018,
+        sourceType: "module",
+    },
+    rules: {
+        "no-console": "off", // console.log를 허용하지 않는다.
+    },
+};
+```
+
 ## To Do
 
 - [x] Server
 - [x] Pug
-- [x] Static
+- [x] Static <-프론트엔드를 위한 정적인 파일들을 모아둠
 - [] SocketIO
