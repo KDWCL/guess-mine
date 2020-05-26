@@ -26,3 +26,10 @@ yarn add socket.io
     }
 
 ```
+
+## To Do
+
+- [x] Server
+- [x] Pug
+- [x] Static
+- [] SocketIO
