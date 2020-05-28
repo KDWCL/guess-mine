@@ -22,14 +22,13 @@ const io = socketIO.listen(server);
 // http://localhost:4000/socket.io/socket.io.js를 쳐보면 프론트엔드 코드가 나오게 된다.
 
 io.on("connection", (socket) => {
-  // 클라이언트에서 메세지를 보내면 그 메세지를 받을 수 있어야 한다. 그 메세지는 data 안에 들어가 있다.
   socket.on("newMessage", ({ message }) => {
     socket.broadcast.emit("messageNotif", {
       message,
-      nickname: socket.nickname || "Anon",
+      nickname: socket.nickname || "익명",
     });
   });
-  socket.on("newNickname", ({ nickname }) => {
+  socket.on("setNickname", ({ nickname }) => {
     socket.nickname = nickname;
   });
 });
