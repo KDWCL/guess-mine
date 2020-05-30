@@ -10,9 +10,10 @@ html(lang="en")
             form#jsLogin
                 input(placeholder="What's your nickname",type="text")
         .gameContainer#jsGame
-            h1 You are logged in
-            div#jsNotifications
-            //- 여기에 appendChild로 connection이나 disconnection한 유저를 띄운다
+            .chat#jsChat
+                ul.chat__messages#jsMessage
+                form.chat__form#jsSendMsg
+                    input(placeholder="Write a message", type="text")
         script.
             // script안에 코드를 의미함
             // pug javascript literal 검색
