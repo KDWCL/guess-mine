@@ -1,4 +1,4 @@
-import { initSockets } from "./socket";
+import { initSockets } from "./sockets";
 
 const nickname = localStorage.getItem("nickname"); // localstorage에서 가져온다.
 const body = document.querySelector("body");

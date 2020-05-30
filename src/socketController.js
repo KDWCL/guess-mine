@@ -10,4 +10,8 @@ export default (socket) => {
     // console.log("disconnect");
     broadcast(events.disconnected, { nickname: socket.nickname });
   });
+
+  socket.on(events.sendMsg, ({ message }) => {
+    broadcast(events.newMsg, { message, nickname: socket.nickname });
+  });
 };
