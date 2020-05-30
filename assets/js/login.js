@@ -1,3 +1,5 @@
+import { initSockets } from "./socket";
+
 const nickname = localStorage.getItem("nickname"); // localstorage에서 가져온다.
 const body = document.querySelector("body");
 const loginForm = document.querySelector("#jsLogin");
@@ -9,6 +11,7 @@ const logIn = (nickname) => {
   // 이 함수는 로그인 처리와 동시에 nickname 설정도 처리한다.
   const socket = io("/"); // 서버 소켓과 연결
   socket.emit(window.events.setNickname, { nickname });
+  initSockets(socket);
 };
 
 // 첫번째 함수
