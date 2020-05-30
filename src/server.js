@@ -3,6 +3,8 @@ import { join } from "path";
 import socketIO from "socket.io";
 import logger from "morgan";
 import socketController from "./socketController";
+import events from "./events";
+console.log(events);
 
 const PORT = 4000;
 const app = express();
@@ -14,7 +16,10 @@ app.use(logger("dev"));
 const handleListening = () =>
   console.log(`Server running: http://localhost:${PORT}`);
 
-app.get("/", (req, res) => res.render("home"));
+// pug 템플릿에 events라는 새로운 변수를 준다.
+app.get("/", (req, res) => {
+  return res.render("home", { events: JSON.stringify(events) });
+});
 
 const server = app.listen(PORT, handleListening);
 

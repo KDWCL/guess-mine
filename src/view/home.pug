@@ -11,5 +11,10 @@ html(lang="en")
                 input(placeholder="What's your nickname",type="text")
         .gameContainer#jsGame
             h1 You are logged in
+        script.
+            // script안에 코드를 의미함
+            // pug javascript literal 검색
+            // !를 하게 되면 pug 변수가 된다.
+            window.events = !{events}
         script(src="/socket.io/socket.io.js")
         script(src="/js/main.js")
