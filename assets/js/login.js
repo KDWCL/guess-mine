@@ -8,9 +8,10 @@ const LOGGED_IN = "loggedIn";
 const logIn = (nickname) => {
   // 이 함수는 로그인 처리와 동시에 nickname 설정도 처리한다.
   const socket = io("/"); // 서버 소켓과 연결
-  socket.emit("setNickname", { nickname });
+  socket.emit(window.events.setNickname, { nickname });
 };
 
+// 첫번째 함수
 if (nickname === null) {
   // localstorage에 nickname이 없다면 loggedout 처리
   body.className = LOGGED_OUT;
@@ -21,6 +22,7 @@ if (nickname === null) {
   logIn(nickname);
 }
 
+// 두번째 함수
 if (loginForm) {
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -33,3 +35,10 @@ if (loginForm) {
     logIn(value);
   });
 }
+
+/* 
+1. localhost:4000에 접속 시 localstorage에 nickname이 없다면 body 클래스명을 loggedOut으로 한다.
+2. localhost:4000에 접속 시 localstorage에 nickname이 있다면 body 클래스명을 loggedIn으로 한다.
+3. localhost:4000에 접속 시 localstorage에 nickname이 있다면 nickname을 서버에 보낸다. (socket.emit() 사용)
+4. 서버에서 nickname을 받아서 다른 클라이언트 소켓에 broadcast를 한다. 즉, 접속을 알린다.
+*/

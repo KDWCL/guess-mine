@@ -18,6 +18,7 @@ const handleListening = () =>
 
 // pug 템플릿에 events라는 새로운 변수를 준다.
 app.get("/", (req, res) => {
+  // events.js를 프론트에 넘겨주기 위해서 pug에 넘겨준다.
   return res.render("home", { events: JSON.stringify(events) });
 });
 
