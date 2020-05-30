@@ -1,2 +1,2 @@
 import "./login";
-import "./notification";
+import "./notifications";
