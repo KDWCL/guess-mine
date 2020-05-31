@@ -28,11 +28,13 @@ function startPainting() {
   painting = true;
 }
 
+// 새로 만든 함수1
 const beginPath = (x, y) => {
   ctx.beginPath();
   ctx.moveTo(x, y);
 };
 
+// 새로 만든 함수2
 const strokePath = (x, y) => {
   ctx.lineTo(x, y);
   ctx.stroke();
@@ -43,9 +45,11 @@ function onMouseMove(event) {
   const y = event.offsetY;
   if (!painting) {
     beginPath(x, y);
+    // 클라이언트에서 path를 만들면 그 값을 서버로 보낸다.
     getSocket().emit(window.events.beginPath, { x, y });
   } else {
     strokePath(x, y);
+    // 클라이언트에서 path를 만들면 그 값을 서버로 보낸다.
     getSocket().emit(window.events.strokePath, { x, y });
   }
 }
@@ -93,5 +97,6 @@ if (mode) {
   mode.addEventListener("click", handleModeClick);
 }
 
+//socekts.js를 위해 만들어준 함수
 export const handleBeganPath = ({ x, y }) => beginPath(x, y);
 export const handleStrokedPath = ({ x, y }) => strokePath(x, y);
