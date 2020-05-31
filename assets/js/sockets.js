@@ -7,6 +7,7 @@ export const getSocket = () => socket;
 
 export const updateSocket = (aSocket) => (socket = aSocket);
 
+// login.js에 logIn 함수에 넣어줄 함수
 export const initSockets = (aSocket) => {
   const { events } = window;
   updateSocket(aSocket);

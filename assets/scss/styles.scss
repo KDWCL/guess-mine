@@ -4,6 +4,7 @@
 @import "_login";
 @import "_notifications";
 @import "_chat";
+@import "_game";
 
 * {
   box-sizing: border-box;
@@ -40,7 +41,7 @@ body {
     // body 클래스명이 loggedIn이 되면 .gameContainer를 보이게 한다.
     // body.loggedIn이랑 똑같다.
     .gameContainer {
-      display: block;
+      display: flex;
     }
   }
 }
