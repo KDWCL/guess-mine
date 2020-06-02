@@ -5,6 +5,7 @@ let sockets = [];
 let inProgress = false; // "true면 게임시작, false면 게임종료"하는 용도
 let word = null;
 let leader = null;
+let timeout = null;
 
 // Math.floor은 뒷자리 버림.
 // Math.ceil은 뒷자리 올림.
@@ -29,6 +30,7 @@ export default (socket, io) => {
           superBroadcast(events.gameStarted);
           // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
           io.to(leader.id).emit(events.leaderNotif, { word });
+          timeout = setTimeout(endGame, 10000);
         }, 3000);
       }
     }
@@ -49,6 +51,7 @@ export default (socket, io) => {
     });
     sendPlayerUpdate();
     endGame();
+    clearTimeout(timeout);
   };
 
   socket.on(events.setNickname, ({ nickname }) => {
