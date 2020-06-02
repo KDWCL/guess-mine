@@ -18,23 +18,26 @@ export default (socket, io) => {
   const sendPlayerUpdate = () =>
     superBroadcast(events.playerUpdate, { sockets });
   const startGame = () => {
-    if (inProgress === false) {
-      inProgress = true;
-      leader = chooseLeader(); // 리더 선정
-      word = chooserWord();
-      superBroadcast(events.gameStarting);
-      // 실행속도가 너무 빠르기 때문에 조금 늦춰주기 위해 setTimeout 사용
-      setTimeout(() => {
-        superBroadcast(events.gameStarted);
-        // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
-        io.to(leader.id).emit(events.leaderNotif, { word });
-      }, 3000);
+    if (sockets.length > 1) {
+      if (inProgress === false) {
+        inProgress = true;
+        leader = chooseLeader(); // 리더 선정
+        word = chooserWord();
+        superBroadcast(events.gameStarting);
+        // 실행속도가 너무 빠르기 때문에 조금 늦춰주기 위해 setTimeout 사용
+        setTimeout(() => {
+          superBroadcast(events.gameStarted);
+          // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
+          io.to(leader.id).emit(events.leaderNotif, { word });
+        }, 3000);
+      }
     }
   };
 
   const endGame = () => {
     inProgress = false;
     superBroadcast(events.gameEnded);
+    setTimeout(() => startGame(), 3000);
   };
 
   const addPoints = (id) => {
@@ -54,10 +57,6 @@ export default (socket, io) => {
     broadcast(events.newUser, { nickname });
     sendPlayerUpdate();
     startGame();
-    if (sockets.length === 2) {
-      // 두명이 입장되었을 경우 시작함.
-      startGame();
-    }
   });
 
   socket.on(events.disconnect, () => {
