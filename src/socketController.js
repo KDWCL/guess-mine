@@ -1,8 +1,8 @@
 import events from "./events";
-import { chooseWord } from "./words";
+import { chooserWord } from "./words";
 
 let sockets = [];
-let inProgress = false;
+let inProgress = false; // "true면 게임시작, false면 게임종료"하는 용도
 let word = null;
 
 // Math.floor은 뒷자리 버림.
@@ -20,8 +20,15 @@ export default (socket, io) => {
     if (inProgress === false) {
       inProgress = true;
       const leader = chooseLeader(); // 리더 선정
-      word = chooseWord();
+      word = chooserWord();
+      // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
+      io.to(leader.id).emit(events.leaderNotif, { word });
+      superBroadcast(events.gameStarted);
     }
+  };
+
+  const endGame = () => {
+    inProgress = false;
   };
 
   socket.on(events.setNickname, ({ nickname }) => {
@@ -30,6 +37,9 @@ export default (socket, io) => {
     broadcast(events.newUser, { nickname });
     sendPlayerUpdate();
     startGame();
+    if (sockets.length >= 1) {
+      startGame;
+    }
   });
 
   socket.on(events.disconnect, () => {
@@ -38,6 +48,11 @@ export default (socket, io) => {
 
     // fillter이용하여 disconnect되어진 socket만 빼고 sockets에 새로운 배열을 만들어 넣는다.
     sockets = sockets.filter((aSocket) => aSocket.nickname !== socket.nickname);
+
+    // 참가자가 없으면 게임 종료 InProgress를 false로 변환
+    if (sockets.length === 1) {
+      endGame();
+    }
     broadcast(events.disconnected, { nickname: socket.nickname });
     sendPlayerUpdate();
   });
