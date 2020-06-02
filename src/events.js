@@ -14,4 +14,5 @@ export default {
   playerUpdate: "playerUpdate",
   gameStarted: "gameStarted",
   leaderNotif: "leaderNotif",
+  gameEnded: "gameEnded",
 };

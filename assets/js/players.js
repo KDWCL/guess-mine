@@ -1,6 +1,13 @@
-import { hideControls, disableCanvas } from "./paint";
+import {
+  hideControls,
+  disableCanvas,
+  enableCanvas,
+  showControls,
+  resetCanvas,
+} from "./paint";
 
 const board = document.querySelector("#jsPBoard");
+const notifs = document.querySelector("#jsNotifs");
 
 const addPlayers = (players) => {
   board.innerHTML = ""; // jsPBoard안에 요소들을 한번 싹 지워준다.
@@ -15,9 +22,29 @@ export const handlePlayerUpdate = ({ sockets }) => {
   addPlayers(sockets);
 };
 
+const setNotifs = (text) => {
+  notifs.innerText = "";
+  notifs.innerText = text;
+};
+
 export const handleGameStarted = () => {
+  // 게임이 시작되면 #jsNotifis는 비워줘야 함.
+  setNotifs("");
   // disable canvas events
   disableCanvas();
   // hide the canvas controls
   hideControls();
+};
+
+export const handleLeaderNotif = ({ word }) => {
+  enableCanvas();
+  showControls();
+  setNotifs(`you are the leader, paint: ${word}`);
+};
+
+export const handleGameEnded = () => {
+  setNotifs("Game ended");
+  disableCanvas();
+  hideControls();
+  resetCanvas();
 };

@@ -4,6 +4,7 @@ import { chooserWord } from "./words";
 let sockets = [];
 let inProgress = false; // "true면 게임시작, false면 게임종료"하는 용도
 let word = null;
+let leader = null;
 
 // Math.floor은 뒷자리 버림.
 // Math.ceil은 뒷자리 올림.
@@ -19,16 +20,21 @@ export default (socket, io) => {
   const startGame = () => {
     if (inProgress === false) {
       inProgress = true;
-      const leader = chooseLeader(); // 리더 선정
+      leader = chooseLeader(); // 리더 선정
       word = chooserWord();
-      // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
-      io.to(leader.id).emit(events.leaderNotif, { word });
-      superBroadcast(events.gameStarted);
+
+      // 실행속도가 너무 빠르기 때문에 조금 늦춰주기 위해 setTimeout 사용
+      setTimeout(() => {
+        superBroadcast(events.gameStarted);
+        // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
+        io.to(leader.id).emit(events.leaderNotif, { word });
+      }, 2000);
     }
   };
 
   const endGame = () => {
     inProgress = false;
+    superBroadcast(events.gameEnded);
   };
 
   socket.on(events.setNickname, ({ nickname }) => {
@@ -37,28 +43,30 @@ export default (socket, io) => {
     broadcast(events.newUser, { nickname });
     sendPlayerUpdate();
     startGame();
-    if (sockets.length >= 1) {
-      startGame;
+    if (sockets.length === 2) {
+      // 두명이 입장되었을 경우 시작함.
+      startGame();
     }
   });
 
   socket.on(events.disconnect, () => {
-    // 연결되어진 클라이언트(브라우저)를 닫으면 console창에 disconnect 출력
-    // console.log("disconnect");
-
-    // fillter이용하여 disconnect되어진 socket만 빼고 sockets에 새로운 배열을 만들어 넣는다.
+    // filter이용하여 disconnect되어진 socket만 빼고 sockets에 새로운 배열을 만들어 넣는다.
     sockets = sockets.filter((aSocket) => aSocket.nickname !== socket.nickname);
 
-    // 참가자가 없으면 게임 종료 InProgress를 false로 변환
+    // 참가자가 없으면 게임 종료 inProgress를 false로 변환
+    // 리더가 나가도 inProgress를 false로 반환해서 게임종료
     if (sockets.length === 1) {
       endGame();
+    } else if (leader) {
+      if (leader.id === socket.id) {
+        endGame();
+      }
     }
     broadcast(events.disconnected, { nickname: socket.nickname });
     sendPlayerUpdate();
   });
 
   socket.on(events.sendMsg, ({ message }) => {
-    console.log(socket.id);
     broadcast(events.newMsg, { message, nickname: socket.nickname });
   });
 
