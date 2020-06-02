@@ -5,6 +5,7 @@ import {
   showControls,
   resetCanvas,
 } from "./paint";
+import { disableChat } from "./chat";
 
 const board = document.querySelector("#jsPBoard");
 const notifs = document.querySelector("#jsNotifs");
@@ -39,6 +40,7 @@ export const handleGameStarted = () => {
 export const handleLeaderNotif = ({ word }) => {
   enableCanvas();
   showControls();
+  disableChat(); // 리더는 채팅을 못하게함.
   setNotifs(`you are the leader, paint: ${word}`);
 };
 
@@ -47,4 +49,8 @@ export const handleGameEnded = () => {
   disableCanvas();
   hideControls();
   resetCanvas();
+};
+
+export const handleGameStarting = () => {
+  setNotifs("Game will start soon");
 };

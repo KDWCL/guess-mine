@@ -29,3 +29,12 @@ if (sendMsg) {
 
 export const handleNewMessage = ({ message, nickname }) =>
   appendMsg(message, nickname);
+
+// 리더는 채팅을 못치게 만들기 위한 함수
+export const disableChat = () => {
+  sendMsg.style.display = "none";
+};
+
+export const enableChat = () => {
+  sendMsg.style.display = "flex";
+};

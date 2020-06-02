@@ -22,19 +22,30 @@ export default (socket, io) => {
       inProgress = true;
       leader = chooseLeader(); // 리더 선정
       word = chooserWord();
-
+      superBroadcast(events.gameStarting);
       // 실행속도가 너무 빠르기 때문에 조금 늦춰주기 위해 setTimeout 사용
       setTimeout(() => {
         superBroadcast(events.gameStarted);
         // 특정 소켓에 데이터를 보낼 때 사용 io.to().emit() or io.socket.to().emit()
         io.to(leader.id).emit(events.leaderNotif, { word });
-      }, 2000);
+      }, 3000);
     }
   };
 
   const endGame = () => {
     inProgress = false;
     superBroadcast(events.gameEnded);
+  };
+
+  const addPoints = (id) => {
+    sockets = sockets.map((socket) => {
+      if (socket.id === id) {
+        socket.points += 10;
+      }
+      return socket;
+    });
+    sendPlayerUpdate();
+    endGame();
   };
 
   socket.on(events.setNickname, ({ nickname }) => {
@@ -67,7 +78,15 @@ export default (socket, io) => {
   });
 
   socket.on(events.sendMsg, ({ message }) => {
-    broadcast(events.newMsg, { message, nickname: socket.nickname });
+    if (message === word) {
+      superBroadcast(events.newMsg, {
+        message: `Winner is ${socket.nickname}, word was: ${word}`,
+        nickname: "Bot",
+      });
+      addPoints(socket.id);
+    } else {
+      broadcast(events.newMsg, { message, nickname: socket.nickname });
+    }
   });
 
   socket.on(events.beginPath, ({ x, y }) => {

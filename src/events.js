@@ -15,4 +15,5 @@ export default {
   gameStarted: "gameStarted",
   leaderNotif: "leaderNotif",
   gameEnded: "gameEnded",
+  gameStarting: "gameStarting",
 };
