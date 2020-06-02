@@ -9,7 +9,8 @@ const LOGGED_IN = "loggedIn";
 
 const logIn = (nickname) => {
   // 이 함수는 로그인 처리와 동시에 nickname 설정도 처리한다.
-  const socket = io("/"); // 서버 소켓과 연결
+  const socket = io(); // 서버 소켓과 연결
+  console.log(socket);
   socket.emit(window.events.setNickname, { nickname });
   initSockets(socket);
 };

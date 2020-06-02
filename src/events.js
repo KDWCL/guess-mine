@@ -9,4 +9,6 @@ export default {
   strokePath: "strokePath",
   beganPath: "beganPath",
   strokedPath: "strokedPath",
+  fill: "fill",
+  filled: "filled",
 };

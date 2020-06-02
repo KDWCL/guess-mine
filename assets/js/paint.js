@@ -35,9 +35,14 @@ const beginPath = (x, y) => {
 };
 
 // 새로 만든 함수2
-const strokePath = (x, y) => {
+const strokePath = (x, y, color = null) => {
+  let currentColor = ctx.strokeStyle; // 원래 자기색으로 마지막 되돌리기 위해서 선언
+  if (color !== null) {
+    ctx.strokeStyle = color;
+  }
   ctx.lineTo(x, y);
   ctx.stroke();
+  ctx.strokeStyle = currentColor; // 원래 자기색으로 되돌린다.
 };
 
 function onMouseMove(event) {
@@ -50,7 +55,11 @@ function onMouseMove(event) {
   } else {
     strokePath(x, y);
     // 클라이언트에서 path를 만들면 그 값을 서버로 보낸다.
-    getSocket().emit(window.events.strokePath, { x, y });
+    getSocket().emit(window.events.strokePath, {
+      x,
+      y,
+      color: ctx.strokeStyle,
+    });
   }
 }
 
@@ -70,9 +79,20 @@ function handleModeClick() {
   }
 }
 
+const fill = (color = null) => {
+  let currentColor = ctx.fillStyle;
+  if (color !== null) {
+    ctx.fillStyle = color;
+  }
+  ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  ctx.fillStyle = currentColor; // 자신의 클릭되어졌었던 원래색으로 되돌림
+};
+
 function handleCanvasClick() {
   if (filling) {
-    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    // ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    fill();
+    getSocket().emit(window.events.fill, { color: ctx.fillStyle });
   }
 }
 
@@ -97,6 +117,10 @@ if (mode) {
   mode.addEventListener("click", handleModeClick);
 }
 
-//socekts.js를 위해 만들어준 함수
+// socekts.js를 위해 만들어준 함수
+// 다른 클라이언트 canvas에 그림을 그려주는 역할을 한다.
 export const handleBeganPath = ({ x, y }) => beginPath(x, y);
-export const handleStrokedPath = ({ x, y }) => strokePath(x, y);
+export const handleStrokedPath = ({ x, y, color }) => strokePath(x, y, color);
+export const handleFilled = ({ color }) => {
+  fill(color);
+};
