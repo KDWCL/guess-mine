@@ -11,4 +11,5 @@ export default {
   strokedPath: "strokedPath",
   fill: "fill",
   filled: "filled",
+  playerUpdate: "playerUpdate",
 };

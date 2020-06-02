@@ -28,5 +28,4 @@ const io = socketIO.listen(server);
 // socketio에게 서버를 잡고 있으라고 한다.
 // http://localhost:4000/socket.io/socket.io.js를 쳐보면 프론트엔드 코드가 나오게 된다.
 
-io.on("connection", (socket) => socketController(socket));
-io.sockets.emit("gi", "everyone");
+io.on("connection", (socket) => socketController(socket, io));
