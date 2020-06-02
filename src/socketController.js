@@ -1,6 +1,14 @@
 import events from "./events";
+import { chooseWord } from "./words";
 
 let sockets = [];
+let inProgress = false;
+let word = null;
+
+// Math.floor은 뒷자리 버림.
+// Math.ceil은 뒷자리 올림.
+// 리더를 랜덤으로 고른다.
+const chooseLeader = () => sockets[Math.floor(Math.random() * sockets.length)];
 
 export default (socket, io) => {
   const broadcast = (event, data) => socket.broadcast.emit(event, data);
@@ -8,12 +16,20 @@ export default (socket, io) => {
   const superBroadcast = (event, data) => io.emit(event, data);
   const sendPlayerUpdate = () =>
     superBroadcast(events.playerUpdate, { sockets });
+  const startGame = () => {
+    if (inProgress === false) {
+      inProgress = true;
+      const leader = chooseLeader(); // 리더 선정
+      word = chooseWord();
+    }
+  };
 
   socket.on(events.setNickname, ({ nickname }) => {
     socket.nickname = nickname;
     sockets.push({ id: socket.id, points: 0, nickname: nickname });
     broadcast(events.newUser, { nickname });
     sendPlayerUpdate();
+    startGame();
   });
 
   socket.on(events.disconnect, () => {
