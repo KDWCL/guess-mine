@@ -55,63 +55,24 @@ yarn add socket.io
 };
 ```
 
+## 정리
+
+### 클라이언트
+
+1. [socket.io](https://slack-redir.net/link?url=http%3A%2F%2Fsocket.io) 라이브러리를 쓰고있는 서버에 페이지 요청을 했을 경우 /socket.io/socket.io.js 라는 파일을 덧붙여서 받게된다.
+2. /socket.io/socket.io.js를 home.pug에 script을 추가해준다. 이제 클라이언트에서 io function을 쓸 수 있게된다.
+3. 클라이언트용 main.js를 만들고 const socket = io() (클라이언트 소켓생성)를 해주게 되면 서버소켓에 연결요청을 한다.
+
+### 서버
+
+1. 서버에서 const io = socketIO.listen(app.listen(80));을 하게되면 서버 소켓인 io가 생성된다.
+2. 클라이언트에서 연결요청을 하면 (const socket = io()) io.on("connection",(socket)=>{console.log(socket)}) 을 통해 connection 이벤트가 발생되고 콜백함수가 실행된다. 이 콜백함수는 인자로 클라이언트 데이터를 가지고 있는 socket을 인자로 사용한다. 이 소켓은 클라이언트에서 서버로 데이터를 보내면 서버에서 데이터를 담을 socket이라는 인스턴스를 만들고 거기에 담아서 콜백인자로 사용된다.
+3. 소켓 api 들로는 socket.on, socket.emit , socket.broadcast.emit, io.broadcast.emit등이 있으며 on은 이벤트를 받을 때 , emit은 데이터를 보낼때, broadcast는 모든 소켓에게 보낼떄(io가 앞에오면 전부, socket이 앞에오면 해당 소켓제외 모든 클라이언트) 사용 된다.
+4. 서버는 콜백 인자로 받은 socket 객체를 이용하여 socket.on, socket.emit, socket.broadcast.emit 등을 사용할 수 있다. 근데 이 콜백인자인 socket은 마지막으로 연결된 소켓이나마지막에 통신을 했던 소켓의 정보를 가진 socket 객체로 바뀌게 된다.
+
 ## To Do
 
 - [x] Server
 - [x] Pug
 - [x] Static <-프론트엔드를 위한 정적인 파일들을 모아둠
-- [] SocketIO
-
-## SocketIO
-
-SocketIO란 Socket을 구현한 것이다. WebSocket 개발을 쉽게 하기 위한 것이다.
-실시간 분석, 즉각적인 메시지나 채팅, 바이너리 스트리밍, 문서 공동작업 등을 할 수 있다.
-
-우리는 SocketIO를 이용하여 서버위에 다른 서버를 올릴 수 있다. http와 traffic이 다르기 때문에 가능하다. 즉 ws와 http는 공존이 가능하다.
-
-SocketIO는 서버와 클라이언트가 동시에 될 수 있다. WebSocket서버와 WebSocket클라이언트가 있다는 뜻이다. SocketIO로 서버를 프로그래밍 할 수 있고 클라이언트도 프로그래밍 가능하다. SocketIO는 서버와 클라이언트 둘다에 설치해야 한다.
-
-http://localhost:4000/socket.io/socket.io.js를 쳐보면 프론트엔드 코드가 나오게 된다. 서버에서 html과 js파일을 보낸 것이다.
-
-### SocketIO에서 io란?
-
-```javascript
-const server = app.listen(PORT, () => {
-  console.log("서버 대기 중");
-});
-const io = socketIO.listen(server);
-```
-
-server 라는 변수를 만들어준 이유는 socketIO에 전달하기 위해서이다.
-io라는 변수를 만들어 준 이유는 io가 모든 이벤트를 알아야하기 떄문이다. Socket은 HTTP처럼 라우터(라우터란 라우트가 일치할때 라우트핸들함수를 실행시켜주는 역할)가 없고 연결만 있으며 **이벤트**를 가지고 있다. 이벤트란 모든 것이 될 수 있다. 서버와 클라이언트는 이벤트를 받을 수 있고 보낼 수 있다. 또한 이벤트에서 가장 중요한 것은 **connection**이다.
-**connection 이벤트는 서버와 클라이언트가 연결이 되었을 때 실행되는 이벤트라고 생각하면 된다.**
-
-```javascript
-io.on("connection", () => console.log("Somebody Connected"));
-```
-
-클라이언트에 스크립트를 추가해준다. 클라이언트도 소켓을 생성한다.
-
-```html
-<!DOCTYPE html> html(lang="en") head meta(charset="UTF-8") meta(name="viewport",
-content="width=device-width, initial-scale=1.0") title Guess Mine body h1 Hello
-script(src="/socket.io/socket.io.js")
-```
-
-이제 console창에 io를 쳐보면 엄청 긴 함수가 출력된다. 이제 io("/")를 쳐보면
-
-```
-GET / 200 68.994 ms - 244
-GET /favicon.ico 404 1.186 ms - 150
-GET / 304 13.290 ms - -
-GET / 304 11.743 ms - -
-Somebody Connected
-```
-
-가 출력 된다. 다른 브라우저를 열고 io("/")를 치게 되면 Somebody Connected가 2개가 된다. 즉 클라이언트가 2개가 연결되었다는 뜻이다.
-
-자, 여기서 알아야 될 것은 소켓에 연결된 서버가 꺼졌을 경우 소켓은 계속해서 서버의 이벤트를 듣고 있고 서버에 접속시도를 하게 된다. 다시 서버가 살아나면 소켓과 서버는 자동으로 다시 연결된다.
-
-소켓이란 request객체이다. express위에서 보내는 HTTP요청 같은.
-어떤 요청이나 응답을 받고 request를 콘솔에 출력할 수 있다.
-socket은 socket id를 가지고 있다.
+- [x] SocketIO
